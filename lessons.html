@@ -68,8 +68,18 @@
       },
       cyber: {
         basics: ["ما هو الأمن السيبراني؟", "أنواع الهجمات", "الأمان على الويب"],
-        ethical: ["مقدمة في الهكر الأخلاقي", "اختبار الاختراق", "استغلال الثغرات"]
+        ethical: ["مقدمة في الهاكر الأخلاقي", "اختبار الاختراق", "استغلال الثغرات"]
       }
+    };
+
+    const labels = {
+      html: "HTML",
+      python: "Python",
+      javascript: "JavaScript",
+      uiux: "تصميم UI/UX",
+      figma: "Figma",
+      basics: "أساسيات الأمن",
+      ethical: "الهاكر الأخلاقي"
     };
 
     function loadLanguages() {
@@ -81,7 +91,7 @@
         Object.keys(lessonData[field]).forEach(lang => {
           const opt = document.createElement("option");
           opt.value = lang;
-          opt.textContent = lang.toUpperCase();
+          opt.textContent = labels[lang] || lang;
           languageSelect.appendChild(opt);
         });
       }
