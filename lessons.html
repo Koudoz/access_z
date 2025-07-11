@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>نظام الدروس | Access_Z</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #0f0;
+    }
+    select, button {
+      background: black;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 10px;
+      font-family: monospace;
+      margin: 10px 0;
+    }
+    .lesson-box {
+      border: 1px solid #0f0;
+      padding: 10px;
+      margin: 10px 0;
+      background: rgba(0, 255, 0, 0.05);
+    }
+    .ai-tag {
+      color: cyan;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📚 نظام الدروس - Access_Z</h1>
+
+  <h2>اختر المجال:</h2>
+  <select id="field" onchange="loadLanguages()">
+    <option value="">-- اختر المجال --</option>
+    <option value="programming">برمجة</option>
+    <option value="design">تصميم</option>
+    <option value="cyber">أمن سيبراني</option>
+  </select>
+
+  <h2>اختر اللغة:</h2>
+  <select id="language" onchange="showLessons()">
+    <option value="">-- اختر اللغة --</option>
+  </select>
+
+  <div id="lessons"></div>
+
+  <script>
+    const lessonData = {
+      programming: {
+        html: ["مقدمة إلى HTML", "إنشاء أول صفحة", "وسوم شائعة"],
+        python: ["أساسيات Python", "المتغيرات والحلقات", "التحكم في التدفق"],
+        javascript: ["DOM و التفاعل", "الجمل الشرطية", "الدوال والمصفوفات"]
+      },
+      design: {
+        uiux: ["مبادئ التصميم الجيد", "ألوان وتأثيرات", "أدوات تصميم مشهورة"],
+        figma: ["ما هو Figma؟", "تصميم أول واجهة", "مشاركة المشاريع"]
+      },
+      cyber: {
+        basics: ["ما هو الأمن السيبراني؟", "أنواع الهجمات", "الأمان على الويب"],
+        ethical: ["مقدمة في الهكر الأخلاقي", "اختبار الاختراق", "استغلال الثغرات"]
+      }
+    };
+
+    function loadLanguages() {
+      const field = document.getElementById("field").value;
+      const languageSelect = document.getElementById("language");
+      languageSelect.innerHTML = "<option value=''>-- اختر اللغة --</option>";
+
+      if (lessonData[field]) {
+        Object.keys(lessonData[field]).forEach(lang => {
+          const opt = document.createElement("option");
+          opt.value = lang;
+          opt.textContent = lang.toUpperCase();
+          languageSelect.appendChild(opt);
+        });
+      }
+    }
+
+    function showLessons() {
+      const field = document.getElementById("field").value;
+      const lang = document.getElementById("language").value;
+      const container = document.getElementById("lessons");
+      container.innerHTML = "";
+
+      if (lessonData[field] && lessonData[field][lang]) {
+        lessonData[field][lang].forEach((title, i) => {
+          container.innerHTML += `
+            <div class="lesson-box">
+              <strong>📘 الدرس ${i + 1}:</strong> ${title} <span class="ai-tag">[ذ.اصطناعي]</span>
+            </div>
+          `;
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>
