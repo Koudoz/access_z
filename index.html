@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access_Z Lite</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      color: #00ff88;
+      font-family: monospace;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .login, .terminal, .main {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    input, button {
+      background: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 8px;
+      margin: 6px;
+      border-radius: 4px;
+    }
+
+    .hidden { display: none; }
+    .terminal-output { text-align: left; white-space: pre; max-width: 90%; }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="login" id="loginScreen">
+    <h2>Access_Z Login</h2>
+    <input type="text" placeholder="اسم المستخدم" id="user">
+    <input type="password" placeholder="كلمة السر" id="pass">
+    <button onclick="start()">دخول</button>
+  </div>
+
+  <div class="terminal hidden" id="terminalScreen">
+    <div class="terminal-output" id="termOut"></div>
+  </div>
+
+  <div class="main hidden" id="mainScreen">
+    <h1>Access_Z</h1>
+    <p>مرحبًا بك في النظام</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = "01";
+    const fontSize = 12;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.95) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 40);
+
+    function start() {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("terminalScreen").classList.remove("hidden");
+      const out = document.getElementById("termOut");
+      const lines = [
+        "جارٍ تسجيل الدخول...",
+        "تم التحقق من المستخدم.",
+        "مرحبًا بك يا قدوة.",
+        "تشغيل النظام..."
+      ];
+      let i = 0;
+      function next() {
+        if (i < lines.length) {
+          out.innerHTML += lines[i++] + "\\n";
+          setTimeout(next, 800);
+        } else {
+          document.getElementById("terminalScreen").classList.add("hidden");
+          document.getElementById("mainScreen").classList.remove("hidden");
+        }
+      }
+      next();
+    }
+  </script>
+</body>
+</html>
