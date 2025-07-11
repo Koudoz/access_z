@@ -1,119 +1,87 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Access_Z Lite</title>
+  <title>Access_Z Terminal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: black;
-      color: #00ff88;
-      font-family: monospace;
-      overflow: hidden;
+    html, body{
+      margin:0; height:100%; background:#000; color:#0f0;
+      font-family:monospace; overflow:hidden;
     }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
+    canvas{position:absolute;inset:0;z-index:0;}
+    .center-box{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      text-align:center;z-index:1;
     }
-
-    .login, .terminal, .main {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
+    .input-box{
+      background:rgba(0,0,0,.7);border:1px solid #0f0;padding:20px;border-radius:10px;
     }
-
-    input, button {
-      background: #111;
-      color: #0f0;
-      border: 1px solid #0f0;
-      padding: 8px;
-      margin: 6px;
-      border-radius: 4px;
+    input{
+      background:#000;color:#0f0;border:1px solid #0f0;padding:10px;width:200px;
+      margin:8px 0;font-family:monospace;
     }
-
-    .hidden { display: none; }
-    .terminal-output { text-align: left; white-space: pre; max-width: 90%; }
+    button{
+      background:#0f0;color:#000;border:none;padding:10px 24px;cursor:pointer;
+    }
   </style>
 </head>
 <body>
+  <!-- خلفية المطر الرقمي -->
   <canvas id="matrix"></canvas>
 
-  <div class="login" id="loginScreen">
-    <h2>Access_Z Login</h2>
-    <input type="text" placeholder="اسم المستخدم" id="user">
-    <input type="password" placeholder="كلمة السر" id="pass">
-    <button onclick="start()">دخول</button>
+  <!-- صندوق تسجيل الدخول -->
+  <div class="center-box">
+    <div class="input-box">
+      <h2>Access_Z // Terminal Login</h2>
+      <input id="user" type="text" placeholder="Username"><br>
+      <input id="pass" type="password" placeholder="Password"><br>
+      <button onclick="login()">Login</button>
+      <p id="msg"></p>
+    </div>
   </div>
 
-  <div class="terminal hidden" id="terminalScreen">
-    <div class="terminal-output" id="termOut"></div>
-  </div>
-
-  <div class="main hidden" id="mainScreen">
-    <h1>Access_Z</h1>
-    <p>مرحبًا بك في النظام</p>
-  </div>
+  <!-- صوت قصير عند محاولة الدخول -->
+  <audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
   <script>
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
-    canvas.height = window.innerHeight;
+    /* تأثير المطر الرقمي (Matrix Rain) */
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
-    const letters = "01";
-    const fontSize = 12;
+    canvas.height = window.innerHeight;
+    const letters = '01';
+    const fontSize = 14;
     const columns = canvas.width / fontSize;
     const drops = Array(Math.floor(columns)).fill(1);
 
-    function draw() {
-      ctx.fillStyle = "rgba(0,0,0,0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px monospace";
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters.charAt(Math.floor(Math.random() * letters.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.95) drops[i] = 0;
-        drops[i]++;
-      }
+    function drawMatrix(){
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#0f0';
+      ctx.font = fontSize + 'px monospace';
+      drops.forEach((y, i) => {
+        const text = letters[Math.floor(Math.random()*letters.length)];
+        ctx.fillText(text, i*fontSize, y*fontSize);
+        drops[i] = (y*fontSize > canvas.height && Math.random() > 0.975) ? 0 : y+1;
+      });
     }
-    setInterval(draw, 40);
+    setInterval(drawMatrix, 33);
 
-    function start() {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("terminalScreen").classList.remove("hidden");
-      const out = document.getElementById("termOut");
-      const lines = [
-        "جارٍ تسجيل الدخول...",
-        "تم التحقق من المستخدم.",
-        "مرحبًا بك يا قدوة.",
-        "تشغيل النظام..."
-      ];
-      let i = 0;
-      function next() {
-        if (i < lines.length) {
-          out.innerHTML += lines[i++] + "\\n";
-          setTimeout(next, 800);
-        } else {
-          document.getElementById("terminalScreen").classList.add("hidden");
-          document.getElementById("mainScreen").classList.remove("hidden");
-        }
+    /* نظام دخول وهمي */
+    function login(){
+      document.getElementById('beep').play();
+      const u = document.getElementById('user').value;
+      const p = document.getElementById('pass').value;
+      const msg = document.getElementById('msg');
+      if(u==='admin' && p==='accessz'){
+        msg.style.color='#0f0';
+        msg.textContent='✔ Welcome back, Admin!';
+        setTimeout(()=>{document.body.innerHTML='<h1 style="color:#0f0;text-align:center;margin-top:25vh;">🔓 Access Granted</h1>';},2000);
+      }else{
+        msg.style.color='red';
+        msg.textContent='❌ Access Denied!';
       }
-      next();
     }
   </script>
 </body>
